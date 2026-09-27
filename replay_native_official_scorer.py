@@ -50,7 +50,8 @@ def replay(benchmark_repo):
         api_fields = api.model_dump(mode='json')
         assert all(primary[key] == api_fields[key] for key in primary), 'causal_endpoint_parity_failed'
         assert primary['diagnosis_correct'] is expected_diagnosis, 'unexpected_fixture_diagnosis'
-        assert primary['required_evidence_covered'] is expected_evidence, 'unexpected_fixture_grounding'
+        assert primary['required_evidence_covered'] is expected_evidence, (
+            'unexpected_fixture_grounding:' + case.opaque_case_id + ':' + variant)
         assert result['unmodified_scorer_output']['execution_reliability'] is False
         assert result['unmodified_scorer_output']['success'] is False
         assert result['official_completion_fields_applicable'] is False
@@ -70,9 +71,22 @@ def replay(benchmark_repo):
         wrong_diagnosis = api_run.diagnosis.model_copy(update={'mechanism_code': contracts.MechanismCode.UNKNOWN})
         compare(case, api_run.model_copy(update={'diagnosis': wrong_diagnosis}),
                 'wrong_mechanism', False, True)
-        bad_query = helpers._delay_query(case, wrong_parent=True) if is_delay else 'SELECT 1'
+        if is_delay:
+            bad_query = helpers._delay_query(case, wrong_parent=True)
+        else:
+            signal = case.mechanism_evidence
+            # Keep a genuine telemetry SQL citation while using the wrong
+            # source identity, matching upstream's identity-negative family.
+            # SELECT 1 is not an evidence citation and correctly yields null
+            # (not estimable), rather than a measured false grounding.
+            correct_identity = f"{signal.identity_column} = '{signal.identity_value}'"
+            bad_query = query.replace(correct_identity,
+                                      f"{signal.identity_column} = 'synthetic-wrong-entity'")
+            assert bad_query != query, 'negative_identity_mutation_not_applied'
         bad_run = helpers._run(case, bad_query, rows)
         compare(case, bad_run, 'invalid_evidence_lineage', True, False)
+        no_evidence_run = helpers._run(case, 'SELECT 1', rows)
+        compare(case, no_evidence_run, 'non_telemetry_citation_not_estimable', True, None)
     return {'stage': 'synthetic_native_pinned_scorer_contract_replay',
             'scored_model_calls': 0, 'live_incident_scores': 0,
             'scorer_sha256': SCORER_SHA256, 'all_checks_passed': True, 'checks': checks}

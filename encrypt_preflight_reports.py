@@ -15,7 +15,7 @@ allowed = ('operator_output.log', 'checkout.log', 'derived_condition_registratio
            'binary_checkout_observation.json', 'semantic-rca-transfer-011_operator_audit.json',
            'semantic-rca-transfer-006_operator_audit.json', 'native_run.json',
            'evaluation.json', 'frozen_diagnosis.json', 'live_operator_audit.json',
-           'native_runtime_registration.json')
+           'native_runtime_registration.json', 'operator_preflight_trace.json')
 archive_bytes = io.BytesIO()
 with zipfile.ZipFile(archive_bytes, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
     for name in allowed:
