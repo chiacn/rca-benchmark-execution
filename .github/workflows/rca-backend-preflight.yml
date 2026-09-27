@@ -1,0 +1,53 @@
+name: Selected RCA backend preflight
+on:
+  workflow_dispatch:
+    inputs:
+      report_session:
+        required: true
+        type: string
+      report_recipient:
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+      - run: python -m pip install uv==0.7.22 cryptography==46.0.5
+      - name: Verify pinned upstream binary
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python upstream_artifact_probe.py
+      - name: Install frozen benchmark environment
+        run: |
+          git clone --filter=blob:none https://github.com/GreptimeTeam/agent-rca-bench.git "$RUNNER_TEMP/benchmark"
+          git -C "$RUNNER_TEMP/benchmark" checkout --detach fdfbca65c87c36c6b06bddfa6d611544f13bfa34
+          cd "$RUNNER_TEMP/benchmark"
+          uv sync --extra dev --frozen
+          uv pip install cryptography==46.0.5
+      - name: Execute selected full official preparation gates
+        run: |
+          cd "$RUNNER_TEMP/benchmark"
+          uv run python "$GITHUB_WORKSPACE/actions_backend_preflight.py" --benchmark-repo "$RUNNER_TEMP/benchmark" --bins-tar "$RUNNER_TEMP/pinned-greptime-artifact/bins.tar.gz" --operator-root "$RUNNER_TEMP/rca-selected-backend" --public-receipt "$GITHUB_WORKSPACE/backend_preflight_receipt.json"
+      - name: Encrypt private preparation reports
+        if: always()
+        env:
+          RCA_REPORT_SESSION: ${{ inputs.report_session }}
+          RCA_REPORT_RECIPIENT: ${{ inputs.report_recipient }}
+        run: python encrypt_preflight_reports.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: selected-backend-receipt
+          path: |
+            backend_preflight_receipt.json
+            encrypted_backend_reports.json
+          retention-days: 1
+          if-no-files-found: warn
