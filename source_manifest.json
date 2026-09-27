@@ -1,0 +1,36 @@
+{
+  "semantic-rca-transfer-011": {
+    "source": "RCA100-v1.1/t019",
+    "approx_bytes": 35900000,
+    "public_file_sha256": {
+      "alerts.parquet": "ec22fa40dc1c54efda4e0a55b028ec0f52b3e6ee42359adb1f60b9b29e2c6b1c",
+      "events.parquet": "86175467a5fcf019c675f7d8619745f662e966e69846d2256fc4a32670af348f",
+      "logs.parquet": "7256a21f14112099f9e6b819cc8722e4631d4bec2f351337d48ad5143e6e7dd3",
+      "metrics.parquet": "2d161591c9f9498e1c27428044728667c0ff652b38a6cb709480dfcf31b7bdee",
+      "task.json": "90a4363dea51d8114db566b35ca700480ac28b57ea83d91f77b339ff43a69814",
+      "topology.json": "37cab9fb9e65d196405e1f4107b345a2712853706e2fddf532a0a12fa1de2fbb",
+      "traces.parquet": "00a23f5cebeb33d3b62f9a834bc428e16801e75606841b693f43b15f07c33471"
+    },
+    "base_url": "https://aiops-benchmark.oss-cn-hongkong.aliyuncs.com/rca/rca100/v1.1/cases/t019/"
+  },
+  "semantic-rca-transfer-006": {
+    "source": "anon-ops/ops-lite@9ac09981c08ab02a0b923eab7830d778934851a8/hs12-search-delay-7l9ggr",
+    "max_approx_bytes": 1300000,
+    "public_file_sha256": {
+      "abnormal_logs.parquet": "a693086e6b4382da97c28741fb37601e3ebf22e4f2b2e22443fd50b2ed9217b3",
+      "abnormal_metrics.parquet": "09c4b6b1cdcc4bf2c5da99644a2eb27e9884411ba96d4bef296f725e132e5bb7",
+      "abnormal_metrics_histogram.parquet": "e32a3325b88d628f12472184cf17685c87472cb6d565952def421ff47dda2412",
+      "abnormal_metrics_sum.parquet": "84b62013259196e0f2565fb0ad12a36288dd557c97b3f4dfd5adf9e1a97c36e0",
+      "abnormal_traces.parquet": "8a62d1eaef3e2e942de7aa083a67e783260accb38f886cabe7204237ef3ae411",
+      "conclusion.parquet": "7968099b94857a643a9cafd8d0da4279fc847f3459a53bbcbfbaea600edac873",
+      "env.json": "7f8c763eafe15838ec3ce13d4aef6b1bccb21ab89367833d99a391fce19f7b67",
+      "injection.json": "f91d0901848c1a00075eeab89e435b545f7a3f55341018e53d757befcfc064d9",
+      "normal_logs.parquet": "cb9e5bb59b40282d656faba974420800bc029cbd5d8649813adf104fff38c64a",
+      "normal_metrics.parquet": "3c83fac8b6558e0328375934d9612bdc5248b02b81e16780d9961bca031fe860",
+      "normal_metrics_histogram.parquet": "1047b799b49d4ba9d745ca42cb7bb244e3521a8422bd811e02550fad6e3de3ff",
+      "normal_metrics_sum.parquet": "6c21d44ae9e860d4b7f84fec49052af84dae3dfa7b38cb37b19247b8d037bc48",
+      "normal_traces.parquet": "b4830b5bbf4e3e628139f088689f862994e3a29b6d0a4f8f5428efcebadd6c62"
+    },
+    "base_url": "https://huggingface.co/datasets/anon-ops/ops-lite/resolve/9ac09981c08ab02a0b923eab7830d778934851a8/cases/hs12-search-delay-7l9ggr/"
+  }
+}
