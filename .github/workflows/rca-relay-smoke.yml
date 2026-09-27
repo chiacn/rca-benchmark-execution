@@ -13,6 +13,7 @@ on:
         type: string
 permissions:
   contents: write
+  actions: read
 jobs:
   smoke:
     runs-on: ubuntu-24.04
@@ -23,6 +24,10 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m pip install cryptography==46.0.5
+      - name: Verify pinned upstream binary access and version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python upstream_artifact_probe.py
       - name: Run operator-only encrypted relay
         env:
           GITHUB_TOKEN: ${{ github.token }}

@@ -1,6 +1,6 @@
 """Operator-only GitHub mailbox. No model, shell, filesystem, or oracle tool.
 
-Requests and responses live on separate, pre-created private branches. Tool
+Encrypted requests and responses live on separate, pre-created branches. Tool
 extensions must be registered in process with a validator and callable; the
 request cannot name a module, executable, file, URL, or Python expression.
 """
@@ -114,6 +114,7 @@ class Broker:
             stream.flush()
 
     def process(self, request):
+        digest = None
         seq = request.get("seq") if type(request) is dict else None
         if type(seq) is not int or seq < 1:
             seq = None
@@ -151,6 +152,11 @@ class Broker:
             spec.validate(arguments)
         except ProtocolError as error:
             response["error"] = str(error)
+            # A rejected tool still completes a valid transport sequence. Never
+            # reuse its ID for a different request and accept a stale response.
+            if digest is not None and seq == self.last_seq + 1:
+                self.last_seq = seq
+                self.cache[seq] = (digest, dict(response))
             self.trace("rejected", seq=seq, code=response["error"])
             return response
         try:
