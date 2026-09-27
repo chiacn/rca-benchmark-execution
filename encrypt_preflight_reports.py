@@ -7,11 +7,15 @@ from pathlib import Path
 import zipfile
 from mailbox_crypto import derive_key, generate_keypair, seal
 
-root = Path(os.environ['RUNNER_TEMP']) / 'rca-selected-backend'
+root = Path(os.environ['RUNNER_TEMP']) / os.environ.get('RCA_OPERATOR_ROOT_NAME', 'rca-selected-backend')
+if root.parent.resolve() != Path(os.environ['RUNNER_TEMP']).resolve():
+    raise RuntimeError('operator_report_root_outside_runner_temp')
 output = Path('encrypted_backend_reports.json')
 allowed = ('operator_output.log', 'checkout.log', 'derived_condition_registration.json',
            'binary_checkout_observation.json', 'semantic-rca-transfer-011_operator_audit.json',
-           'semantic-rca-transfer-006_operator_audit.json')
+           'semantic-rca-transfer-006_operator_audit.json', 'native_run.json',
+           'evaluation.json', 'frozen_diagnosis.json', 'live_operator_audit.json',
+           'native_runtime_registration.json')
 archive_bytes = io.BytesIO()
 with zipfile.ZipFile(archive_bytes, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
     for name in allowed:

@@ -272,7 +272,7 @@ def run(broker, transport, request_branch, response_branch, max_seconds, poll_se
             reason = "operator_signal"
     finally:
         terminal = {"session": broker.session, "terminal": True, "reason": reason,
-                    "last_seq": broker.last_seq, "scored_model_calls": 0}
+                    "last_seq": broker.last_seq, "remote_model_calls": 0}
         broker.trace("terminal", reason=reason, last_seq=broker.last_seq)
         transport.put("terminal.json", response_branch, terminal)
 
