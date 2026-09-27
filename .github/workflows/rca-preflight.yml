@@ -2,6 +2,7 @@ name: RCA environment preflight
 on:
   push:
     branches: [main]
+    paths: [actions_preflight.py, source_manifest.json]
   workflow_dispatch:
 permissions:
   contents: read
